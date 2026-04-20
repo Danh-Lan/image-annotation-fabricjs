@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Mode } from "./Mode";
 import { Canvas, Rect, Textbox, FabricObject, FabricImage } from "fabric";
 
@@ -76,16 +76,17 @@ function useModeToggle(fabricRef: React.RefObject<Canvas | null>, mode: Mode) {
 }
 
 // Custom hook for annotation drawing
-function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: Mode, label: string) {
+function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: Mode, label: string, setPendingRect) {
   useEffect(() => {
     const canvas = fabricRef.current;
     if (!canvas || mode !== "annotate") return;
 
     let rect: Rect | null = null;
-    let text: Textbox | null = null;
 
     let startX = 0;
     let startY = 0;
+
+    const MIN_SIZE = 10;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onMouseDown = (opt: any) => {
@@ -107,26 +108,12 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
         evented: true,
       });
 
-      text = new Textbox(label, {
-        left: startX,
-        top: startY - 20,
-        originX: "left",
-        originY: "top",
-        width: 120,
-        fontSize: 12,
-        fill: "red",
-        backgroundColor: "rgba(255,255,255,0.7)",
-        selectable: false,
-        evented: false,
-      });
-
       canvas.add(rect);
-      canvas.add(text);
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onMouseMove = (opt: any) => {
-      if (!rect || !text) return;
+      if (!rect) return;
 
       const p = canvas.getScenePoint(opt.e);
       rect.set({
@@ -136,30 +123,23 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
         top: Math.min(p.y, startY),
       });
 
-      text.set({
-        left: Math.min(p.x, startX),
-        top: Math.min(p.y, startY) - 20,
-      });
-
       canvas.renderAll();
     };
-    
-    const MIN_SIZE = 10;
 
     const onMouseUp = () => {
-      if (!rect || !text) return;
+      if (!rect) return;
       const w = rect.width ?? 0;
       const h = rect.height ?? 0;
 
       if (w < MIN_SIZE || h < MIN_SIZE) {
         canvas.remove(rect);
-        canvas.remove(text);
-      } else {
-        rect.set({selectable: true, evented: true});
+        rect = null;
+        return;
       }
-
+      
+      rect.set({selectable: true, evented: true});
+      setPendingRect(rect);
       rect = null;
-      text = null;
     };
 
     canvas.on("mouse:down", onMouseDown);
@@ -171,21 +151,61 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
       canvas.off("mouse:move", onMouseMove);
       canvas.off("mouse:up", onMouseUp);
     };
-  }, [fabricRef, mode, label]);
+  }, [fabricRef, mode, label, setPendingRect]);
 }
 
 export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fabricRef = useRef<Canvas | null>(null);
+  const [pendingRect, setPendingRect] = useState<Rect | null>(null);
+
+  const confirmAnnotation = () => {
+    if (!pendingRect || !fabricRef.current) return;
+
+    const text = new Textbox(label, {
+      left: pendingRect.left,
+      top: pendingRect.top! - 20,
+      originX: "left",
+      originY: "top",
+      fontSize: 12,
+      fill: "red",
+      backgroundColor: "rgba(255,255,255,0.7)",
+      selectable: false,
+      evented: false,
+    });
+
+    pendingRect.set({
+      selectable: true,
+      evented: true,
+    });
+
+    fabricRef.current.add(text);
+    setPendingRect(null);
+  };
+
+  const cancelAnnotation = () => {
+    if (!pendingRect || !fabricRef.current) return;
+
+    fabricRef.current.remove(pendingRect);
+    setPendingRect(null);
+  };
 
   useCanvasInit(canvasRef, fabricRef);
   useImageRender(fabricRef, imageUrl);
   useModeToggle(fabricRef, mode);
-  useAnnotationDrawing(fabricRef, mode, label);
+  useAnnotationDrawing(fabricRef, mode, label, setPendingRect);
 
   return (
-    <div style={{ display: "flex", width: "800px", height: "500px", border: "1px solid #ddd" }}>
-      <canvas ref={canvasRef} />
+    <div>
+      <div style={{ display: "flex", width: "800px", height: "500px", border: "1px solid #ddd" }}>
+        <canvas ref={canvasRef} />
+      </div>
+      {pendingRect && (
+        <div style={{ position: "absolute", top: 10, left: 10, background: "#fff" }}>
+          <button onClick={confirmAnnotation}>Confirm</button>
+          <button onClick={cancelAnnotation}>Cancel</button>
+        </div>
+      )}
     </div>
   );
 }
