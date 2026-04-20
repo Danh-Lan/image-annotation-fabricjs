@@ -154,6 +154,23 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
   }, [fabricRef, mode, label, setPendingRect]);
 }
 
+function useDeleteKey(fabricRef: React.RefObject<Canvas | null>) {
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key !== "Delete") return;
+
+      const canvas = fabricRef.current;
+      if (!canvas) return;
+
+      const active = canvas.getActiveObject();
+      if (active) canvas.remove(active);
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [fabricRef]);
+}
+
 export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fabricRef = useRef<Canvas | null>(null);
@@ -194,6 +211,7 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
   useImageRender(fabricRef, imageUrl);
   useModeToggle(fabricRef, mode);
   useAnnotationDrawing(fabricRef, mode, label, setPendingRect);
+  useDeleteKey(fabricRef);
 
   return (
     <div>
