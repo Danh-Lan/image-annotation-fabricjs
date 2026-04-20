@@ -203,6 +203,7 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
       originY: "top",
       fontFamily: "Arial",
       fontSize: fontSize,
+      fontWeight: "bold",
       fill: "white",
       backgroundColor: "red",
       selectable: false,
