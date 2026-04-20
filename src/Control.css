@@ -8,6 +8,7 @@
   border-radius: 4px;
 }
 
+<<<<<<< HEAD
 .control-container button {
   width: 8rem;
   transition-duration: 0.4s;
@@ -18,6 +19,8 @@
   color: white
 }
 
+=======
+>>>>>>> 0dcd2182e0bc4ac847145c5f2e3533cbb71e1658
 .file-upload {
   display: inline-block;
   background: #24A0ED;

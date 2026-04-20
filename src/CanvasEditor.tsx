@@ -234,6 +234,7 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
   useDeleteKey(fabricRef);
 
   return (
+<<<<<<< HEAD
     <div className="canvas-editor-wrapper">
       <div className="canvas-editor-canvas-container">
         <canvas ref={canvasRef} />
@@ -250,6 +251,18 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
             className="canvas-editor-button canvas-editor-button-cancel"
             onClick={cancelAnnotation}
           >
+=======
+    <div className="canvas-editor__wrapper">
+      <div className="canvas-editor__canvas-container">
+        <canvas ref={canvasRef} />
+      </div>
+      {pendingRect && (
+        <div className="canvas-editor__toolbar">
+          <button className="canvas-editor__button canvas-editor__button--confirm" onClick={confirmAnnotation}>
+            Confirm
+          </button>
+          <button className="canvas-editor__button canvas-editor__button--cancel" onClick={cancelAnnotation}>
+>>>>>>> 0dcd2182e0bc4ac847145c5f2e3533cbb71e1658
             Cancel
           </button>
         </div>
