@@ -69,6 +69,14 @@ function useModeToggle(fabricRef: React.RefObject<Canvas | null>, mode: Mode) {
     if (mode === "annotate") {
       canvas.selection = false;
 
+      // make the image uninteractive
+      canvas.forEachObject((obj: FabricObject) => {
+        if (obj.type === 'image') {
+          obj.selectable = false;
+          obj.evented = false;
+        }
+      });
+
       canvas.discardActiveObject();
       canvas.renderAll();
     }
