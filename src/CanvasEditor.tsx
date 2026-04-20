@@ -179,14 +179,16 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
   const confirmAnnotation = () => {
     if (!pendingRect || !fabricRef.current) return;
 
+    const fontSize = 16;
     const text = new Textbox(label, {
       left: pendingRect.left,
-      top: pendingRect.top! - 20,
+      top: pendingRect.top! - fontSize - 5,
       originX: "left",
       originY: "top",
-      fontSize: 12,
-      fill: "red",
-      backgroundColor: "rgba(255,255,255,0.7)",
+      fontFamily: "Arial",
+      fontSize: fontSize,
+      fill: "white",
+      backgroundColor: "red",
       selectable: false,
       evented: false,
     });
