@@ -1,0 +1,31 @@
+.control-container {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.control-container > * {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+button {
+  width: 8rem;
+  transition-duration: 0.4s;
+}
+
+button:hover:enabled {
+  background-color: #1ABC9C;
+  color: white
+}
+
+.file-upload {
+  display: inline-block;
+  background: #24A0ED;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.file-upload input {
+  display: none;
+}
