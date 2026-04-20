@@ -8,16 +8,6 @@
   border-radius: 4px;
 }
 
-button {
-  width: 8rem;
-  transition-duration: 0.4s;
-}
-
-button:hover:enabled {
-  background-color: #1ABC9C;
-  color: white
-}
-
 .file-upload {
   display: inline-block;
   background: #24A0ED;
