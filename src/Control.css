@@ -8,12 +8,12 @@
   border-radius: 4px;
 }
 
-button {
+.control-container button {
   width: 8rem;
   transition-duration: 0.4s;
 }
 
-button:hover:enabled {
+.control-container button:hover:enabled {
   background-color: #1ABC9C;
   color: white
 }

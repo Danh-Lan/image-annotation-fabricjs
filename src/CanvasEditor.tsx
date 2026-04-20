@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Mode } from "./Mode";
 import { Canvas, Rect, Textbox, FabricObject, FabricImage } from "fabric";
+import "./CanvasEditor.css";
 
 interface CanvasEditorProps {
   mode: Mode;
@@ -233,14 +234,24 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
   useDeleteKey(fabricRef);
 
   return (
-    <div>
-      <div style={{ display: "flex", width: "800px", height: "500px", border: "1px solid #ddd" }}>
+    <div className="canvas-editor-wrapper">
+      <div className="canvas-editor-canvas-container">
         <canvas ref={canvasRef} />
       </div>
       {pendingRect && (
-        <div style={{ position: "absolute", top: 10, left: 10, background: "#fff" }}>
-          <button onClick={confirmAnnotation}>Confirm</button>
-          <button onClick={cancelAnnotation}>Cancel</button>
+        <div className="canvas-editor-toolbar">
+          <button
+            className="canvas-editor-button canvas-editor-button-confirm"
+            onClick={confirmAnnotation}
+          >
+            Confirm
+          </button>
+          <button
+            className="canvas-editor-button canvas-editor-button-cancel"
+            onClick={cancelAnnotation}
+          >
+            Cancel
+          </button>
         </div>
       )}
     </div>
