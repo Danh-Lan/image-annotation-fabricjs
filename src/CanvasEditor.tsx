@@ -143,9 +143,23 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
 
       canvas.renderAll();
     };
+    
+    const MIN_SIZE = 10;
 
     const onMouseUp = () => {
+      if (!rect || !text) return;
+      const w = rect.width ?? 0;
+      const h = rect.height ?? 0;
+
+      if (w < MIN_SIZE || h < MIN_SIZE) {
+        canvas.remove(rect);
+        canvas.remove(text);
+      } else {
+        rect.set({selectable: true, evented: true});
+      }
+
       rect = null;
+      text = null;
     };
 
     canvas.on("mouse:down", onMouseDown);
