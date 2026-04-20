@@ -76,7 +76,13 @@ function useModeToggle(fabricRef: React.RefObject<Canvas | null>, mode: Mode) {
 }
 
 // Custom hook for annotation drawing
-function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: Mode, label: string, setPendingRect) {
+function useAnnotationDrawing(
+  fabricRef: React.RefObject<Canvas | null>,
+  mode: Mode,
+  label: string,
+  pendingRect: Rect | null,
+  setPendingRect: React.Dispatch<React.SetStateAction<Rect | null>>
+) {
   useEffect(() => {
     const canvas = fabricRef.current;
     if (!canvas || mode !== "annotate") return;
@@ -90,6 +96,8 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onMouseDown = (opt: any) => {
+      if (pendingRect) return; // while pending can't draw another box
+
       const p = canvas.getScenePoint(opt.e);
       startX = p.x;
       startY = p.y;
@@ -151,7 +159,7 @@ function useAnnotationDrawing(fabricRef: React.RefObject<Canvas | null>, mode: M
       canvas.off("mouse:move", onMouseMove);
       canvas.off("mouse:up", onMouseUp);
     };
-  }, [fabricRef, mode, label, setPendingRect]);
+  }, [fabricRef, mode, label, pendingRect, setPendingRect]);
 }
 
 function useDeleteKey(fabricRef: React.RefObject<Canvas | null>) {
@@ -212,7 +220,7 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
   useCanvasInit(canvasRef, fabricRef);
   useImageRender(fabricRef, imageUrl);
   useModeToggle(fabricRef, mode);
-  useAnnotationDrawing(fabricRef, mode, label, setPendingRect);
+  useAnnotationDrawing(fabricRef, mode, label, pendingRect, setPendingRect);
   useDeleteKey(fabricRef);
 
   return (
