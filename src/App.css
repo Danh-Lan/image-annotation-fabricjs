@@ -5,13 +5,3 @@
   align-items: center;
   gap: 1rem;
 }
-
-button {
-  width: 8rem;
-  transition-duration: 0.4s;
-}
-
-button:hover:enabled {
-  background-color: #1ABC9C;
-  color: white
-}
