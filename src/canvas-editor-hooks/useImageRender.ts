@@ -9,7 +9,19 @@ export default function useImageRender(fabricRef: React.RefObject<Canvas | null>
     FabricImage.fromURL(imageUrl).then((img) => {
       canvas.clear();
 
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
+      const scale = Math.min(
+        canvasWidth / (img.width || 1),
+        canvasHeight / (img.height || 1)
+      );
+
+      img.scale(scale);
+
       img.set({
+        originX: "left",
+        originY: "top",
         selectable: false,
         evented: false,
       });
