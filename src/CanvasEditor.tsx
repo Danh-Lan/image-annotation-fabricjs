@@ -37,6 +37,8 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
       evented: false,
     });
 
+    fabricRef.current.remove(pendingRect);
+
     const group = new Group([pendingRect, text], {
       selectable: false,
       evented: false,
