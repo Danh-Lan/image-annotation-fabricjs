@@ -32,8 +32,19 @@ export default function Control({mode, setMode, label, setLabel, setImageUrl, ha
     <div className="control-container">
       <input placeholder="label" value={label} onChange={handleLabelChange} />
 
-      <button disabled={mode === "interact"} onClick={() => setMode("interact")}>Interact</button>
-      <button disabled={mode === "annotate"} onClick={() => setMode("annotate")}>Annotate</button>
+      <button
+        className={mode === "interact" ? "active" : ""}
+        onClick={() => setMode("interact")}
+      >
+        Interact
+      </button>
+
+      <button
+        className={mode === "annotate" ? "active" : ""}
+        onClick={() => setMode("annotate")}
+      >
+        Annotate
+      </button>
 
       <button className="file-export" onClick={() => handleExport(imageFilename)}>
         Download
