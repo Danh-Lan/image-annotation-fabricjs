@@ -1,4 +1,4 @@
-import type { Canvas, Rect } from "fabric";
+import { Canvas, Rect } from "fabric";
 import { useEffect } from "react";
 import type { Mode } from "../Mode";
 
