@@ -1,7 +1,8 @@
 import './App.css'
 import CanvasEditor from './CanvasEditor'
+import type { CanvasEditorRef } from './CanvasEditor'
 import Control from './Control'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { Mode } from './Mode'
 
 function App() {
@@ -9,10 +10,37 @@ function App() {
   const [label, setLabel] = useState<string>("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
+  const canvasEditorRef = useRef<CanvasEditorRef>(null);
+
+  const handleExport = (imageFilename: string | null) => {
+    if (!imageFilename) return;
+
+    const dataUrl = canvasEditorRef.current?.exportImage();
+
+    const link = document.createElement("a");
+    link.href = dataUrl!;
+    link.download = imageFilename + "_annotated.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+   
   return (
     <div className="app-container">
-      <Control mode={mode} setMode={setMode} label={label} setLabel={setLabel} setImageUrl={setImageUrl} />
-      <CanvasEditor mode={mode} label={label} imageUrl={imageUrl} />
+      <Control 
+        mode={mode} 
+        setMode={setMode} 
+        label={label} 
+        setLabel={setLabel} 
+        setImageUrl={setImageUrl} 
+        handleExport={handleExport}
+      />
+      <CanvasEditor 
+        ref={canvasEditorRef} 
+        mode={mode} 
+        label={label} 
+        imageUrl={imageUrl} 
+      />
     </div>
   )
 }

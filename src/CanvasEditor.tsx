@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import type { Mode } from "./Mode";
 import { Canvas, Rect, Textbox, Group } from "fabric";
 import "./CanvasEditor.css";
@@ -14,10 +14,34 @@ interface CanvasEditorProps {
   imageUrl: string | null;
 }
 
-export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProps) {
+export interface CanvasEditorRef {
+  exportImage: () => string | null;
+}
+
+const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
+  ({ mode, label, imageUrl }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fabricRef = useRef<Canvas | null>(null);
   const [pendingRect, setPendingRect] = useState<Rect | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    exportImage: () => {
+      const canvas = fabricRef.current;
+      if (!canvas) return null;
+
+      const img = canvas.getObjects("image")[0];
+      if (!img) return null;
+
+      return canvas.toDataURL({
+        left: img.left,
+        top: img.top,
+        width: img.width * img.scaleX,
+        height: img.height * img.scaleY,
+        multiplier: 1,
+        format: "png"
+      });
+    },
+  }));
 
   const confirmAnnotation = () => {
     if (!pendingRect || !fabricRef.current) return;
@@ -84,4 +108,6 @@ export default function CanvasEditor({ mode, label, imageUrl }: CanvasEditorProp
       )}
     </div>
   );
-}
+});
+
+export default CanvasEditor;
