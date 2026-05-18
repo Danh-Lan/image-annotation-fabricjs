@@ -10,7 +10,10 @@ export default function useDeleteKey(fabricRef: React.RefObject<Canvas | null>) 
       if (!canvas) return;
 
       const active = canvas.getActiveObject();
-      if (active) canvas.remove(active);
+      if (active) {
+        canvas.remove(active);
+        canvas.requestRenderAll();
+      }    
     };
 
     window.addEventListener("keydown", handleKey);

@@ -71,6 +71,8 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
     })
 
     fabricRef.current.add(group);
+    group.setCoords();
+    fabricRef.current.requestRenderAll();
     setPendingRect(null);
   };
 
