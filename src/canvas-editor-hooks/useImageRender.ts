@@ -11,6 +11,7 @@ export default function useImageRender(fabricRef: React.RefObject<Canvas | null>
     FabricImage.fromURL(imageUrl, { 
       signal: abortController.signal
     }).then((img) => {
+      canvas.discardActiveObject();
       canvas.clear();
 
       const canvasWidth = canvas.width;
@@ -36,7 +37,7 @@ export default function useImageRender(fabricRef: React.RefObject<Canvas | null>
       canvas.add(img);
       canvas.centerObject(img);
       canvas.sendObjectToBack(img);
-      canvas.renderAll();
+      canvas.requestRenderAll();
     })
     .catch((err) => {
       if (err.name !== "AbortError") {

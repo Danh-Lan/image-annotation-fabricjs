@@ -28,7 +28,7 @@ export default function useModeToggle(fabricRef: React.RefObject<Canvas | null>,
       });
 
       canvas.discardActiveObject();
-      canvas.renderAll();
+      canvas.requestRenderAll();
     }
   }, [fabricRef, mode]);
 }
