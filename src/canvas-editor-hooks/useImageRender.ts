@@ -1,4 +1,4 @@
-import { Canvas, FabricImage } from "fabric";
+import { Canvas, FabricImage, iMatrix } from "fabric";
 import { useEffect } from "react";
 
 export default function useImageRender(fabricRef: React.RefObject<Canvas | null>, imageUrl: string | null) {
@@ -37,6 +37,7 @@ export default function useImageRender(fabricRef: React.RefObject<Canvas | null>
       canvas.add(img);
       canvas.centerObject(img);
       canvas.sendObjectToBack(img);
+      canvas.setViewportTransform([...iMatrix]);
       canvas.requestRenderAll();
     })
     .catch((err) => {
