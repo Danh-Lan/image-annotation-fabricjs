@@ -22,7 +22,8 @@ export default function useAnnotationDrawing(
 
     const onMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
       if (pendingRect) return; // while pending can't draw another box
-      
+      if ("button" in opt.e && opt.e.button !== 0) return;
+
       const p = opt.scenePoint;
       startX = p.x;
       startY = p.y;
