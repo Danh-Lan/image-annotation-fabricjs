@@ -11,6 +11,8 @@ export default function useModeToggle(fabricRef: React.RefObject<Canvas | null>,
       canvas.selection = true;
 
       canvas.forEachObject((obj: FabricObject) => {
+        if ((obj.data?.role === "background-image")) return;
+
         obj.selectable = true;
         obj.evented = true;
       });

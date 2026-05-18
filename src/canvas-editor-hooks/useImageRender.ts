@@ -24,6 +24,9 @@ export default function useImageRender(fabricRef: React.RefObject<Canvas | null>
         originY: "top",
         selectable: false,
         evented: false,
+        data: {
+          role: "background-image"
+        }
       });
 
       canvas.add(img);
