@@ -32,11 +32,13 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
       const img = canvas.getObjects("image")[0];
       if (!img) return null;
 
+      const {left, top, width, height} = img.getBoundingRect();
+
       return canvas.toDataURL({
-        left: img.left,
-        top: img.top,
-        width: img.width * img.scaleX,
-        height: img.height * img.scaleY,
+        left,
+        top,
+        width,
+        height,
         multiplier: 1,
         format: "png"
       });
