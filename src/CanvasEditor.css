@@ -49,3 +49,10 @@
   background: #e1e1e1;
   border-color: #c6c6c6;
 }
+
+.canvas-editor-zoom-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.35;
+}

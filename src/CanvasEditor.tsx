@@ -7,6 +7,8 @@ import useImageRender from "./canvas-editor-hooks/useImageRender";
 import useModeToggle from "./canvas-editor-hooks/useModeToggle";
 import useAnnotationDrawing from "./canvas-editor-hooks/useAnnotationDrawing";
 import useDeleteKey from "./canvas-editor-hooks/useDeleteKey";
+import useCanvasZoomPan from "./canvas-editor-hooks/useCanvasZoomPan";
+import { runAtDefaultViewport } from "./canvas-editor-hooks/runAtDefaultViewport";
 
 interface CanvasEditorProps {
   mode: Mode;
@@ -28,26 +30,28 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
     exportImage: () => {
       const canvas = fabricRef.current;
       if (!canvas) return null;
-      
-      const imgs = canvas.getObjects().filter(
-        (o) => (o.data?.role === "background-image")
-      );
 
-      if (imgs.length !== 1) {
-        throw new Error("Expected exactly one background image");
-      }
+      return runAtDefaultViewport(canvas, () => {
+        const imgs = canvas.getObjects().filter(
+          (o) => o.data?.role === "background-image"
+        );
 
-      const img = imgs[0];
+        if (imgs.length !== 1) {
+          throw new Error("Expected exactly one background image");
+        }
 
-      const {left, top, width, height} = img.getBoundingRect();
+        const img = imgs[0];
 
-      return canvas.toDataURL({
-        left,
-        top,
-        width,
-        height,
-        multiplier: 1,
-        format: "png"
+        const { left, top, width, height } = img.getBoundingRect();
+
+        return canvas.toDataURL({
+          left,
+          top,
+          width,
+          height,
+          multiplier: 1,
+          format: "png",
+        });
       });
     },
   }));
@@ -95,12 +99,16 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
   useModeToggle(fabricRef, mode);
   useAnnotationDrawing(fabricRef, mode, label, pendingRect, setPendingRect);
   useDeleteKey(fabricRef);
+  useCanvasZoomPan(fabricRef);
 
   return (
     <div className="canvas-editor-wrapper">
       <div className="canvas-editor-canvas-container">
         <canvas ref={canvasRef} />
       </div>
+      <p className="canvas-editor-zoom-hint">
+        Scroll to zoom. Alt + drag to pan. Double-click empty area to reset view.
+      </p>
       {pendingRect && (
         <div className="canvas-editor-toolbar">
           <button
