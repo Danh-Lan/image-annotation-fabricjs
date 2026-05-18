@@ -1,4 +1,4 @@
-import { Canvas, Rect } from "fabric";
+import { Canvas, Rect, type TPointerEvent, type TPointerEventInfo } from "fabric";
 import { useEffect } from "react";
 import type { Mode } from "../Mode";
 
@@ -20,11 +20,10 @@ export default function useAnnotationDrawing(
 
     const MIN_SIZE = 10;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onMouseDown = (opt: any) => {
+    const onMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
       if (pendingRect) return; // while pending can't draw another box
-
-      const p = canvas.getScenePoint(opt.e);
+      
+      const p = opt.scenePoint;
       startX = p.x;
       startY = p.y;
 
@@ -45,11 +44,10 @@ export default function useAnnotationDrawing(
       canvas.add(rect);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const onMouseMove = (opt: any) => {
+    const onMouseMove = (opt: TPointerEventInfo<TPointerEvent>) => {
       if (!rect) return;
 
-      const p = canvas.getScenePoint(opt.e);
+      const p = opt.scenePoint;
       rect.set({
         width: Math.abs(p.x - startX),
         height: Math.abs(p.y - startY),
@@ -57,11 +55,15 @@ export default function useAnnotationDrawing(
         top: Math.min(p.y, startY),
       });
 
-      canvas.renderAll();
+      // setCoords: refresh bounding geometry in fabric cache
+      // using rect.set doesn't refresh it automatically, we write it manually
+      rect.setCoords();
+      canvas.requestRenderAll();
     };
 
     const onMouseUp = () => {
       if (!rect) return;
+
       const w = rect.width ?? 0;
       const h = rect.height ?? 0;
 
