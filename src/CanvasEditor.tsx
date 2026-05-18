@@ -28,9 +28,16 @@ const CanvasEditor = forwardRef<CanvasEditorRef, CanvasEditorProps>(
     exportImage: () => {
       const canvas = fabricRef.current;
       if (!canvas) return null;
+      
+      const imgs = canvas.getObjects().filter(
+        (o) => (o.data?.role === "background-image")
+      );
 
-      const img = canvas.getObjects("image")[0];
-      if (!img) return null;
+      if (imgs.length !== 1) {
+        throw new Error("Expected exactly one background image");
+      }
+
+      const img = imgs[0];
 
       const {left, top, width, height} = img.getBoundingRect();
 
